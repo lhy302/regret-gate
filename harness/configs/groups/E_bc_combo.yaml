@@ -1,0 +1,9 @@
+# E 组：B + C（风险分级 + 尾部自审）
+group: E
+description: 组合效果。risk_router + tail_audit，无独立审核。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: true
+  tail_audit: true
+  external_auditor: false
+  revision_stack: false

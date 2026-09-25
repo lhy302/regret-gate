@@ -1,0 +1,13 @@
+# H 组：提示词矩阵（只保留修订栈，单独测能力边界）
+#
+# H 不是单一配置：runner 会按 prompt_matrix 自动展开为 H-none / H-weak / H-strong，
+# 三个子组共享同一任务集、同一采样参数，唯一差异是 prompt_condition（§11.2）。
+group: H
+description: 提示词强度矩阵（none/weak/strong），单独测模型能力边界。
+prompt_condition: none
+prompt_matrix: [none, weak, strong]
+enabled_mechanisms:
+  risk_router: false
+  tail_audit: false
+  external_auditor: false
+  revision_stack: true

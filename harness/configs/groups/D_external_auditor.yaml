@@ -1,0 +1,9 @@
+# D 组：A + 独立审核 Agent
+group: D
+description: 独立审核 Agent 单独效果。触发源为 PendingActions 中的 intercept 级操作。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: false
+  tail_audit: false
+  external_auditor: true
+  revision_stack: false

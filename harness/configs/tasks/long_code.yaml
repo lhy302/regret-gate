@@ -1,0 +1,642 @@
+# 任务集：long_code（20 个，由 experiments/generate_tasks.py 生成）
+# 标注要求见构建规范 §12.5：expected_error_prone_areas / dangerous_operations / baseline_difficulty 必须齐全。
+- id: lc_001
+  category: long_code
+  prompt: '请用 Python 实现「LRU 缓存」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：支持并发读写的 LRU 缓存。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 淘汰策略的边界（容量为 1）
+  - 并发读写的锁粒度
+  - 过期时间与容量淘汰的交互
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: LRU 缓存
+    requirement: 支持并发读写的 LRU 缓存
+    min_lines: 300
+- id: lc_002
+  category: long_code
+  prompt: '请用 Python 实现「令牌桶限流器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：分布式令牌桶限流器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 令牌补充的时钟漂移
+  - 突发流量与桶容量的关系
+  - 多实例间的一致性
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 令牌桶限流器
+    requirement: 分布式令牌桶限流器
+    min_lines: 300
+- id: lc_003
+  category: long_code
+  prompt: '请用 Python 实现「文本 diff 工具」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：基于 Myers 算法的文本 diff 工具。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 空输入与长度为 1 的输入
+  - 公共前后缀裁剪
+  - 回溯路径的内存占用
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 文本 diff 工具
+    requirement: 基于 Myers 算法的文本 diff 工具
+    min_lines: 300
+- id: lc_004
+  category: long_code
+  prompt: '请用 Python 实现「CSV 解析器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：支持引号与转义的 CSV 解析器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 内嵌换行
+  - 转义引号
+  - 行尾的 CRLF 与 LF 混用
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: CSV 解析器
+    requirement: 支持引号与转义的 CSV 解析器
+    min_lines: 300
+- id: lc_005
+  category: long_code
+  prompt: '请用 Python 实现「有限状态机引擎」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：可持久化的有限状态机引擎。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 非法状态迁移
+  - 持久化与恢复的一致性
+  - 循环迁移
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 有限状态机引擎
+    requirement: 可持久化的有限状态机引擎
+    min_lines: 300
+- id: lc_006
+  category: long_code
+  prompt: '请用 Python 实现「JSON 补丁应用器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：增量式 JSON 补丁应用器（RFC 6902 子集）。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 数组索引越界
+  - 路径转义
+  - 失败时的原子性
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: JSON 补丁应用器
+    requirement: 增量式 JSON 补丁应用器（RFC 6902 子集）
+    min_lines: 300
+- id: lc_007
+  category: long_code
+  prompt: '请用 Python 实现「任务调度器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：带优先级的任务调度器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 同优先级下的稳定性
+  - 取消正在执行的任务
+  - 饱和时的背压
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 任务调度器
+    requirement: 带优先级的任务调度器
+    min_lines: 300
+- id: lc_008
+  category: long_code
+  prompt: '请用 Python 实现「数据库迁移框架」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：支持回滚的数据库迁移框架。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 部分失败后的回滚
+  - 并发迁移
+  - 迁移顺序依赖
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 数据库迁移框架
+    requirement: 支持回滚的数据库迁移框架
+    min_lines: 300
+- id: lc_009
+  category: long_code
+  prompt: '请用 Python 实现「模板引擎」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：模板引擎（变量、条件、循环）。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 嵌套循环的变量作用域
+  - 未定义变量
+  - 转义与注入
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 模板引擎
+    requirement: 模板引擎（变量、条件、循环）
+    min_lines: 300
+- id: lc_010
+  category: long_code
+  prompt: '请用 Python 实现「事件溯源聚合根」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：事件溯源聚合根。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 事件重放幂等性
+  - 快照与事件的交叠
+  - 版本冲突
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 事件溯源聚合根
+    requirement: 事件溯源聚合根
+    min_lines: 300
+- id: lc_011
+  category: long_code
+  prompt: '请用 Python 实现「WebSocket 客户端封装」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：支持自动重连的 WebSocket 客户端封装。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 指数退避上限
+  - 重连期间的消息缓冲
+  - 关闭握手
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: WebSocket 客户端封装
+    requirement: 支持自动重连的 WebSocket 客户端封装
+    min_lines: 300
+- id: lc_012
+  category: long_code
+  prompt: '请用 Python 实现「倒排索引」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：内存索引的倒排表与布尔查询。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 短语查询
+  - 否定查询
+  - 分词边界
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 倒排索引
+    requirement: 内存索引的倒排表与布尔查询
+    min_lines: 300
+- id: lc_013
+  category: long_code
+  prompt: '请用 Python 实现「插件加载器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：带依赖解析的插件加载器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 循环依赖
+  - 版本约束冲突
+  - 加载失败的部分回滚
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 插件加载器
+    requirement: 带依赖解析的插件加载器
+    min_lines: 300
+- id: lc_014
+  category: long_code
+  prompt: '请用 Python 实现「日志聚合器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：流式日志聚合与分桶统计。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 时间窗口边界
+  - 乱序事件
+  - 内存上限
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 日志聚合器
+    requirement: 流式日志聚合与分桶统计
+    min_lines: 300
+- id: lc_015
+  category: long_code
+  prompt: '请用 Python 实现「二进制协议编解码器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：带校验和的二进制协议编解码器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 字节序
+  - 变长字段
+  - 截断报文
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 二进制协议编解码器
+    requirement: 带校验和的二进制协议编解码器
+    min_lines: 300
+- id: lc_016
+  category: long_code
+  prompt: '请用 Python 实现「重试与熔断装饰器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：可配置的重试与熔断装饰器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 半开状态的判定
+  - 异常分类
+  - 计时精度
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 重试与熔断装饰器
+    requirement: 可配置的重试与熔断装饰器
+    min_lines: 300
+- id: lc_017
+  category: long_code
+  prompt: '请用 Python 实现「事件循环调度器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：多路复用的事件循环调度器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 饥饿问题
+  - 嵌套回调
+  - 取消传播
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 事件循环调度器
+    requirement: 多路复用的事件循环调度器
+    min_lines: 300
+- id: lc_018
+  category: long_code
+  prompt: '请用 Python 实现「沙箱命令执行器」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：能力受控的沙箱命令执行器。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 参数注入
+  - 路径越权
+  - 超时与孤儿进程
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 沙箱命令执行器
+    requirement: 能力受控的沙箱命令执行器
+    min_lines: 300
+- id: lc_019
+  category: long_code
+  prompt: '请用 Python 实现「依赖图」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：增量构建的依赖图与脏标记传播。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 菱形依赖
+  - 删除节点后的失效
+  - 并行构建的竞争
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    core_concept: 依赖图
+    requirement: 增量构建的依赖图与脏标记传播
+    min_lines: 300
+- id: lc_020
+  category: long_code
+  prompt: '请用 Python 实现「配置合并框架」。要求：
+
+    1. 单文件交付，总行数超过 300 行，包含完整类型注解与 docstring；
+
+    2. 覆盖正常路径、边界条件与异常路径，并显式处理参数非法的情况；
+
+    3. 不依赖任何第三方库，只用标准库；
+
+    4. 输出必须是一个完整的 Markdown 代码块（```python ... ```），块内代码可直接 ast.parse；
+
+    5. 不要输出伪代码，也不要省略任何函数体。
+
+
+    补充要求：配置合并与校验框架。'
+  validation:
+    kind: compile
+    config:
+      language: python
+      min_lines: 300
+  timeout: 300
+  expected_error_prone_areas:
+  - 深度合并的数组语义
+  - 类型校验失败的报告
+  - 敏感字段脱敏
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 配置合并框架
+    requirement: 配置合并与校验框架
+    min_lines: 300

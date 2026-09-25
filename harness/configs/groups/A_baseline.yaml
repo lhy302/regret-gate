@@ -1,0 +1,9 @@
+# A 组：纯流式基线，无任何 harness 干预（v0.2 §6.2 / 规范 §11.2）
+group: A
+description: 基线。无风险分级、无尾部自审、无独立审核、无修订栈，prompt 无追加。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: false
+  tail_audit: false
+  external_auditor: false
+  revision_stack: false

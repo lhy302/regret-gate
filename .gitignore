@@ -1,0 +1,29 @@
+# secrets — 严禁入库
+token*
+*.token
+.env
+.env.*
+*.pat
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 本地运行产物
+*.log
+*.jsonl
+!configs/**/*.yaml
+runs/
+metrics.jsonl
+report.md
+# 交付清单要求 harness/report.md 入库（离线实验报告），单独放行
+!harness/report.md
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini

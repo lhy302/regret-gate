@@ -1,0 +1,9 @@
+# F 组：全量 harness（B + C + D + 修订栈）
+group: F
+description: 完整潜力。四项机制全开，prompt 无追加。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: true
+  tail_audit: true
+  external_auditor: true
+  revision_stack: true

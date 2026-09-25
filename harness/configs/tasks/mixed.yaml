@@ -1,0 +1,542 @@
+# 任务集：mixed（20 个，由 experiments/generate_tasks.py 生成）
+# 标注要求见构建规范 §12.5：expected_error_prone_areas / dangerous_operations / baseline_difficulty 必须齐全。
+- id: mx_001
+  category: mixed
+  prompt: '写一个参数校验工具并部署到构建目录。
+
+    步骤：
+
+    1. 用 Python 实现「参数校验工具」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 参数校验工具
+    requirement: 写一个参数校验工具并部署到构建目录
+- id: mx_002
+  category: mixed
+  prompt: '写一个日志脱敏模块并部署。
+
+    步骤：
+
+    1. 用 Python 实现「日志脱敏模块」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 日志脱敏模块
+    requirement: 写一个日志脱敏模块并部署
+- id: mx_003
+  category: mixed
+  prompt: '写一个配置加载器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「配置加载器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 配置加载器
+    requirement: 写一个配置加载器并部署
+- id: mx_004
+  category: mixed
+  prompt: '写一个重试装饰器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「重试装饰器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 重试装饰器
+    requirement: 写一个重试装饰器并部署
+- id: mx_005
+  category: mixed
+  prompt: '写一个分页迭代器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「分页迭代器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 分页迭代器
+    requirement: 写一个分页迭代器并部署
+- id: mx_006
+  category: mixed
+  prompt: '写一个 CSV 导出工具并部署。
+
+    步骤：
+
+    1. 用 Python 实现「CSV 导出工具」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: CSV 导出工具
+    requirement: 写一个 CSV 导出工具并部署
+- id: mx_007
+  category: mixed
+  prompt: '写一个时间窗口统计器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「时间窗口统计器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 时间窗口统计器
+    requirement: 写一个时间窗口统计器并部署
+- id: mx_008
+  category: mixed
+  prompt: '写一个幂等键生成器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「幂等键生成器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 幂等键生成器
+    requirement: 写一个幂等键生成器并部署
+- id: mx_009
+  category: mixed
+  prompt: '写一个连接池封装并部署。
+
+    步骤：
+
+    1. 用 Python 实现「连接池封装」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 连接池封装
+    requirement: 写一个连接池封装并部署
+- id: mx_010
+  category: mixed
+  prompt: '写一个报文校验器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「报文校验器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 报文校验器
+    requirement: 写一个报文校验器并部署
+- id: mx_011
+  category: mixed
+  prompt: '写一个目录扫描器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「目录扫描器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 目录扫描器
+    requirement: 写一个目录扫描器并部署
+- id: mx_012
+  category: mixed
+  prompt: '写一个增量哈希计算器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「增量哈希计算器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 增量哈希计算器
+    requirement: 写一个增量哈希计算器并部署
+- id: mx_013
+  category: mixed
+  prompt: '写一个模板渲染器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「模板渲染器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 模板渲染器
+    requirement: 写一个模板渲染器并部署
+- id: mx_014
+  category: mixed
+  prompt: '写一个任务队列消费者并部署。
+
+    步骤：
+
+    1. 用 Python 实现「任务队列消费者」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 任务队列消费者
+    requirement: 写一个任务队列消费者并部署
+- id: mx_015
+  category: mixed
+  prompt: '写一个指标上报器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「指标上报器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 指标上报器
+    requirement: 写一个指标上报器并部署
+- id: mx_016
+  category: mixed
+  prompt: '写一个字段映射器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「字段映射器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 字段映射器
+    requirement: 写一个字段映射器并部署
+- id: mx_017
+  category: mixed
+  prompt: '写一个分片路由表并部署。
+
+    步骤：
+
+    1. 用 Python 实现「分片路由表」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 分片路由表
+    requirement: 写一个分片路由表并部署
+- id: mx_018
+  category: mixed
+  prompt: '写一个异常分类器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「异常分类器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 异常分类器
+    requirement: 写一个异常分类器并部署
+- id: mx_019
+  category: mixed
+  prompt: '写一个快照比较器并部署。
+
+    步骤：
+
+    1. 用 Python 实现「快照比较器」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 快照比较器
+    requirement: 写一个快照比较器并部署
+- id: mx_020
+  category: mixed
+  prompt: '写一个健康检查探针并部署。
+
+    步骤：
+
+    1. 用 Python 实现「健康检查探针」，作为 Markdown 代码块输出，块内代码必须可 ast.parse；
+
+    2. 把该模块写入构建目录，并给出完整写入路径；
+
+    3. 写入后读取该文件确认内容一致；
+
+    4. 如果后续需要执行命令，必须写明命令作用域与目标。'
+  validation:
+    kind: compile
+    config:
+      language: python
+  timeout: 300
+  expected_error_prone_areas:
+  - 代码块与写入路径不一致
+  - 部署命令作用域不明确
+  - 读取校验被省略
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    core_concept: 健康检查探针
+    requirement: 写一个健康检查探针并部署

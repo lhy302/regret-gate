@@ -1,0 +1,9 @@
+# B 组：A + 参数级风险分级（只开 risk_router）
+group: B
+description: 参数级风险分级单独效果。不含尾部自审与独立审核，无 prompt 追加。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: true
+  tail_audit: false
+  external_auditor: false
+  revision_stack: false

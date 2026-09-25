@@ -1,0 +1,12 @@
+# C 组：A + 尾部强制自审（每回合必注入）
+group: C
+description: 尾部强制自审单独效果。不含风险分级与独立审核，无 prompt 追加。
+# 说明：按 §11.2 矩阵，C 组的 revision_stack 标记为 ✗。修订栈在本 harness 中是
+# 尾部自审的落地执行器（协议层，而非独立实验变量）：它的开关只决定“登记到草稿的修改
+# 是否被应用”，不改变 C 组“只有尾部自审这一项干预”的对照语义。矩阵取值保持 ✗ 以严格对齐规范。
+prompt_condition: none
+enabled_mechanisms:
+  risk_router: false
+  tail_audit: true
+  external_auditor: false
+  revision_stack: false

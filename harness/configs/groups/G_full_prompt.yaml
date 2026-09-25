@@ -1,0 +1,9 @@
+# G 组：F + 强提示词（假设后训练的提示词模拟）
+group: G
+description: 全量 harness + prompt_condition=strong。唯一变量是 prompt_condition。
+prompt_condition: strong
+enabled_mechanisms:
+  risk_router: true
+  tail_audit: true
+  external_auditor: true
+  revision_stack: true

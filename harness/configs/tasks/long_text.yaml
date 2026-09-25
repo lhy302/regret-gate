@@ -1,0 +1,562 @@
+# 任务集：long_text（20 个，由 experiments/generate_tasks.py 生成）
+# 标注要求见构建规范 §12.5：expected_error_prone_areas / dangerous_operations / baseline_difficulty 必须齐全。
+- id: lt_001
+  category: long_text
+  prompt: '请撰写一份「受限环境下的 harness 侧纠错机制技术方案」，文体为技术方案。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_001\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 技术方案
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_001]]'
+- id: lt_002
+  category: long_text
+  prompt: '请撰写一份「代码评审流程的标准化说明文档」，文体为流程说明。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_002\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 流程说明
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_002]]'
+- id: lt_003
+  category: long_text
+  prompt: '请撰写一份「面向审计的不可变日志设计说明」，文体为设计说明。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_003\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 设计说明
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_003]]'
+- id: lt_004
+  category: long_text
+  prompt: '请撰写一份「多租户权限模型的产品需求文档」，文体为产品需求。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_004\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 产品需求
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_004]]'
+- id: lt_005
+  category: long_text
+  prompt: '请撰写一份「数据库迁移的运维手册」，文体为运维手册。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_005\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 运维手册
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_005]]'
+- id: lt_006
+  category: long_text
+  prompt: '请撰写一份「线上事故复盘报告（含时间线）」，文体为复盘报告。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_006\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 复盘报告
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_006]]'
+- id: lt_007
+  category: long_text
+  prompt: '请撰写一份「新人入职 30 天技术培训大纲」，文体为培训大纲。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_007\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: easy
+  metadata:
+    doc_type: 培训大纲
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_007]]'
+- id: lt_008
+  category: long_text
+  prompt: '请撰写一份「服务容量评估与压测方案」，文体为评估方案。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_008\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 评估方案
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_008]]'
+- id: lt_009
+  category: long_text
+  prompt: '请撰写一份「灰度发布与回滚策略说明」，文体为策略说明。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_009\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 策略说明
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_009]]'
+- id: lt_010
+  category: long_text
+  prompt: '请撰写一份「数据脱敏与合规审查报告」，文体为合规报告。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_010\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 合规报告
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_010]]'
+- id: lt_011
+  category: long_text
+  prompt: '请撰写一份「指标口径定义与对齐说明」，文体为口径说明。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_011\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 口径说明
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_011]]'
+- id: lt_012
+  category: long_text
+  prompt: '请撰写一份「故障演练（混沌工程）实施方案」，文体为实施方案。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_012\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 实施方案
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_012]]'
+- id: lt_013
+  category: long_text
+  prompt: '请撰写一份「API 版本演进与兼容性政策」，文体为兼容性政策。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_013\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 兼容性政策
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_013]]'
+- id: lt_014
+  category: long_text
+  prompt: '请撰写一份「实验设计与统计显著性说明」，文体为实验设计。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_014\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 实验设计
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_014]]'
+- id: lt_015
+  category: long_text
+  prompt: '请撰写一份「成本优化专项调研报告」，文体为调研报告。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_015\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 调研报告
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_015]]'
+- id: lt_016
+  category: long_text
+  prompt: '请撰写一份「安全威胁建模与缓解措施清单」，文体为威胁建模。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_016\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: hard
+  metadata:
+    doc_type: 威胁建模
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_016]]'
+- id: lt_017
+  category: long_text
+  prompt: '请撰写一份「技术选型对比分析报告」，文体为选型报告。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_017\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 选型报告
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_017]]'
+- id: lt_018
+  category: long_text
+  prompt: '请撰写一份「团队协作规范与会议制度」，文体为协作规范。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_018\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: easy
+  metadata:
+    doc_type: 协作规范
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_018]]'
+- id: lt_019
+  category: long_text
+  prompt: '请撰写一份「可观测性建设三年路线图」，文体为路线图。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_019\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 路线图
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_019]]'
+- id: lt_020
+  category: long_text
+  prompt: '请撰写一份「自动化测试分层策略说明」，文体为测试策略。要求：
+
+    1. 正文不少于 2000 字，使用 Markdown 组织为 7 个编号章节；
+
+    2. 每个章节都要给出可执行的具体结论，不要停留在原则性表述；
+
+    3. 明确写出适用范围、边界条件与失败处理方式；
+
+    4. 不允许把任何段落标为待补充，交付内容必须完整。'
+  validation:
+    kind: regex
+    config:
+      pattern: (?s)^(?=.*\#\#\s*1\.)(?=.*\#\#\s*7\.)(?!.*\[\[TBD:lt_020\]\]).{2000,}
+      mode: search
+  timeout: 300
+  expected_error_prone_areas:
+  - 未替换的占位符段落
+  - 章节编号不连续
+  - 正文长度不足
+  dangerous_operations: []
+  baseline_difficulty: medium
+  metadata:
+    doc_type: 测试策略
+    min_chars: 2000
+    sections: 7
+    placeholder: '[[TBD:lt_020]]'
