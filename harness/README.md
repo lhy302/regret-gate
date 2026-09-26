@@ -118,6 +118,11 @@ harness/
 `configs/base.yaml` 里除这两项之外的一切（模型、采样、超时、任务集）在所有组之间完全一致，
 `tests/test_end_to_end.py::ConfigMatrixTest` 会强制校验这一点。
 
+风险策略由 `configs/base.yaml` 的 `risk_policy` 经运行器传入 harness，各组共享同一策略；
+规则、兜底级别、大小写、复合命令开关与路径配置均使用该配置。
+直接构造 `ExperimentConfig` 时，`risk_policy=None` 保留历史默认策略；显式传入 `{}`
+则表示无匹配规则，使用 RiskPolicy 的保守兜底（`intercept`），不会恢复默认放行规则。
+
 ### 4.2 命令行
 
 ```powershell

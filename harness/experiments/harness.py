@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import tempfile
@@ -184,6 +185,9 @@ class MechanismHarness:
     # -- 配置辅助 ---------------------------------------------------------
 
     def _risk_policy(self) -> dict:
+        if self.config.risk_policy is not None:
+            return copy.deepcopy(self.config.risk_policy)
+        # 兼容未提供策略的直接调用方；由 runner 加载的实验使用 YAML 策略。
         return {
             "rules": [
                 {"id": "read_file_allow", "condition": {"tool_name": "read_file"}, "level": "allow",

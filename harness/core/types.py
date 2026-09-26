@@ -381,6 +381,8 @@ class ExperimentConfig:
     timeout: float = 300.0
     sub_group: Optional[str] = None
     source_path: Optional[str] = None
+    # None 保持直接构造配置时的历史默认策略；{} 表示显式空策略。
+    risk_policy: Optional[dict] = None
 
     def to_dict(self) -> dict:
         return {
@@ -393,6 +395,7 @@ class ExperimentConfig:
             "timeout": self.timeout,
             "sub_group": self.sub_group,
             "source_path": self.source_path,
+            "risk_policy": to_jsonable(self.risk_policy),
         }
 
 
