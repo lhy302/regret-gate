@@ -239,6 +239,7 @@ def _make_config(
         sampling=sampling,
         timeout=timeout,
         source_path=source_path,
+        risk_policy=copy.deepcopy(raw.get("risk_policy")),
     )
     # 运行期附加字段（不属于 ExperimentConfig 契约，但需要随运行走）
     config.task_objects = tasks  # type: ignore[attr-defined]

@@ -125,6 +125,99 @@ class GroupMatrixTest(unittest.TestCase):
         self.assertEqual(config.runs_per_task, 3)
 
 
+class RiskPolicyWiringTest(unittest.TestCase):
+    """真实 YAML → 配置对象 → harness → 审计决策，不只检查字段存在。"""
+
+    def _configs(self, policy, group="B"):
+        import shutil
+        import tempfile
+        from pathlib import Path
+        import yaml
+        from experiments.runner import CONFIGS_DIR
+
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name) / "configs"
+        shutil.copytree(CONFIGS_DIR, root)
+        path = root / "base.yaml"
+        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+        raw["risk_policy"] = policy
+        path.write_text(yaml.safe_dump(raw), encoding="utf-8")
+        return build_group_configs(group, configs_dir=str(root), task_limit=4)
+
+    def _harness(self, config):
+        from core.audit_logger import NullAuditLogger
+        from experiments.harness import MechanismHarness
+        from llm.fake_client import FakeClient
+
+        target = next(t for t in config.task_objects if t.category == "short_command")
+        client = FakeClient()
+        client.set_task(target)
+        logger = NullAuditLogger(run_id="policy", group=config.group, task_id=target.id)
+        return MechanismHarness(config=config, task=target, client=client, audit_logger=logger)
+
+    def test_yaml_rule_changes_actual_run_decisions(self):
+        for level in ("allow", "intercept"):
+            with self.subTest(level=level):
+                policy = {"rules": [{"id": "configured_shell", "condition": {
+                    "tool_name": "execute_shell"}, "level": level}]}
+                harness = self._harness(self._configs(policy)[0])
+                result = harness.run()
+                self.assertIsNone(result.error)
+                self.assertEqual(result.intercept_count > 0, level == "intercept")
+                decisions = harness.audit.events("risk_decision")
+                self.assertTrue(decisions)
+                self.assertTrue(any("configured_shell" in str(event) for event in decisions))
+
+    def test_explicit_empty_policy_does_not_restore_allow_rules(self):
+        from core.types import ToolCall
+        harness = self._harness(self._configs({})[0])
+        decision = harness.risk_router.classify(ToolCall(id="read", name="read_file"))
+        self.assertEqual(decision.level, "intercept")
+
+    def test_policy_options_reach_router(self):
+        from core.types import ToolCall
+        policy = {"default_level": "buffer", "case_sensitive": True,
+                  "split_compound_commands": False, "allowed_roots": ["./sandbox"],
+                  "forbidden_roots": ["./private"], "rules": [{
+                      "condition": {"tool_name": "execute_shell", "arg_pattern": "^LOOK"},
+                      "level": "allow"}]}
+        harness = self._harness(self._configs(policy)[0])
+        router = harness.risk_router
+        self.assertEqual(router.classify(ToolCall(id="x", name="execute_shell",
+                         args={"command": "look"})).level, "buffer")
+        self.assertEqual(router.classify(ToolCall(id="x", name="execute_shell",
+                         args={"command": "LOOK; unknown"})).level, "allow")
+        self.assertEqual(router.policy.allowed_roots, ["./sandbox"])
+        self.assertEqual(router.policy.forbidden_roots, ["./private"])
+
+    def test_policy_is_serialized_and_isolated_between_h_subgroups(self):
+        policy = {"rules": [{"condition": {"tool_name": "read_file"}, "level": "buffer"}]}
+        configs = self._configs(policy, group="H")
+        self.assertTrue(all(c.risk_policy == policy for c in configs))
+        snapshot = configs[0].to_dict()
+        snapshot["risk_policy"]["rules"][0]["level"] = "allow"
+        self.assertEqual(configs[0].risk_policy, policy)
+        harness = self._harness(configs[0])
+        configs[0].risk_policy["rules"][0]["level"] = "intercept"
+        self.assertEqual(configs[1].risk_policy, policy)
+        self.assertEqual(harness.risk_router.policy.rules[0]["level"], "buffer")
+
+    def test_missing_policy_preserves_direct_caller_defaults(self):
+        from core.types import ToolCall
+        config = build_group_configs("B", task_limit=4)[0]
+        config.risk_policy = None
+        harness = self._harness(config)
+        self.assertEqual(harness.risk_router.classify(
+            ToolCall(id="read", name="read_file")).level, "allow")
+
+    def test_all_groups_share_base_policy(self):
+        expected = load_base_config()["risk_policy"]
+        for group in GROUP_ORDER:
+            for config in build_group_configs(group, task_limit=4):
+                self.assertEqual(config.risk_policy, expected)
+
+
 class MetricsCollectionTest(unittest.TestCase):
     def test_collect_group_metrics_on_missing_dir(self):
         self.assertEqual(collect_group_metrics("no_such_dir_for_metrics"), [])
