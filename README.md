@@ -3,7 +3,7 @@
 [![CI](https://github.com/lhy302/regret-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/lhy302/regret-gate/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/lhy302/regret-gate)](https://github.com/lhy302/regret-gate/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Tests](https://img.shields.io/badge/tests-262%20passed-brightgreen)](#验收状态)
+[![Tests](https://img.shields.io/badge/tests-268%20passed-brightgreen)](#验收状态)
 
 ## 下载即用（Windows，无需装 Python）
 
@@ -117,13 +117,16 @@ py -3.12 -m unittest discover -s tests -v
     ├── experiments\   harness（编排）/ runner / metrics / stats / analysis / report /
     │                  validators / generate_tasks / summarize
     ├── tasks\         schema / loader
-    ├── tests\         11 个测试模块，227 个用例全绿
+    ├── tests\         13 个测试模块，268 个用例全绿
     ├── report.md      离线 A–H 实验结果报告（200 次 run）
     └── open_questions.md  规范未覆盖细节与所选最保守方案
 ```
 
-**验收状态**：`py -3.12 -m unittest discover -s tests -v` → **227 passed**；
+**验收状态**：`py -3.12 -m unittest discover -s tests -v` → **268 passed**；
 `py -3.12 -m experiments.runner --group all --limit 20` → **200 runs / 0 失败**；
 `report.md` 已生成（离线 FakeClient，仅验证链路与指标口径，不构成模型能力结论）。
+CI 矩阵（ubuntu + windows × py3.10/3.12）在 `main` 上 4/4 全绿。
 
-**GitHub 预置状态**：本地仓已 `init`（分支 `main`）、身份与纯净 `origin`（`lhy302/regret-gate`）已配、`.gitignore` 已建、文档已本地提交。接班 Agent 完成构建后按推送指南 **force 覆盖**远程旧内容即可。
+**仓库状态**：`origin` 为 `lhy302/regret-gate`，远程 `main` 与本地 HEAD 一致。
+历史遗留的 **force 覆盖**流程已作废——当前是常规 `commit → push`，不要再 force。
+外部 PR #2 / #3 已合并关闭；本地运维手册（推送指南）**不入库**，由 `.gitignore` 忽略。

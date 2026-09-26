@@ -215,7 +215,7 @@ external_audit_effective / revision_hit_rate / task_success / cache_break_ratio 
 | 组矩阵与“唯一变量”约束 | `tests/test_runner_config.py`、`ConfigMatrixTest` |
 | §16 交付清单 | 目录结构 + 80 任务 + 全部 configs + `report.md` + 本文件 + `open_questions.md` |
 
-当前规模：**227 个测试全绿**，离线 A–H 共 **200 次 run、0 失败**。
+当前规模：**268 个测试全绿**，离线 A–H 共 **200 次 run、0 失败**。
 
 ## 9. 离线报告的定位（重要）
 

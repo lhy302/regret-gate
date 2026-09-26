@@ -25,7 +25,7 @@ cd regret-gate/harness
 # 只需要标准库 + PyYAML
 py -3.12 -m pip install "PyYAML>=6.0"
 
-# 全部测试（262 个用例，离线 FakeClient，不需要任何 API 密钥）
+# 全部测试（268 个用例，离线 FakeClient，不需要任何 API 密钥）
 py -3.12 -m unittest discover -s tests -v
 
 # 离线跑通 A–H 并出报告
