@@ -35,6 +35,18 @@ output/
 launcher_config.json
 selftest.json
 
+# 本地运维备忘 —— 严禁入库
+#
+# GitHub推送操作指南.md 是纯本地 runbook（含一次性令牌的操作流程）。
+# 它历史上被提交过，后来专门做了一次历史改写 + gc 才彻底清干净，不要再让它回来。
+# 若发现它在待提交列表里：git restore --staged "GitHub推送操作指南.md"
+#
+# 注意顺序：git 取**最后一条**匹配规则，因此宽规则在前、精确规则在后，
+# 这样 `git check-ignore -v` 的输出会直接命中下面那条，便于自查时一眼看懂。
+*推送*指南*.md
+*推送*.md
+/GitHub推送操作指南.md
+
 # 编辑器 / 系统
 .vscode/
 .idea/
