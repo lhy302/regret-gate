@@ -98,13 +98,44 @@ def _merge(base: dict, override: dict) -> dict:
     return result
 
 
+def apply_connection_overrides(
+    configs: list,
+    provider: Optional[str] = None,
+    base_url: Optional[str] = None,
+    api_key: Optional[str] = None,
+    model: Optional[str] = None,
+) -> list:
+    """把启动器/CLI 传入的连接参数打到每组配置上（§11.5 固定模型版本）。
+
+    - `api_key` 只挂在内存里的 config 上，随后由 provider 客户端读取；
+      **绝不写入配置文件、日志或审计**（审计只记 model / base_url / request_id）。
+    - `model` 覆盖 `sampling.model`：真实 API 必须写死具体版本，禁止滚动别名。
+    """
+    for config in configs:
+        if provider:
+            config.provider = provider  # type: ignore[attr-defined]
+            config.sampling.provider = provider
+        if base_url:
+            config.base_url = base_url  # type: ignore[attr-defined]
+        if api_key:
+            config.api_key = api_key  # type: ignore[attr-defined]
+        if model:
+            config.sampling.model = model
+    return configs
+
+
 def build_group_configs(
     group: str,
     configs_dir: Optional[str] = None,
     task_limit: Optional[int] = None,
     runs_override: Optional[int] = None,
+    tasks_dir: Optional[str] = None,
 ) -> list:
-    """返回该组的 `ExperimentConfig` 列表（H 组返回 3 个子组）。"""
+    """返回该组的 `ExperimentConfig` 列表（H 组返回 3 个子组）。
+
+    `tasks_dir` 可显式指定任务集目录：打包成单文件 exe 时配置文件被解包到临时目录，
+    必须由调用方注入正确路径，不能依赖相对路径推断。
+    """
     directory = configs_dir or CONFIGS_DIR
     base = load_base_config(directory)
     path = _group_file(group, directory)
@@ -121,7 +152,7 @@ def build_group_configs(
     runs_per_task = runs_override if runs_override is not None else raw.get("runs_per_task", 1)
 
     all_tasks = load_tasks(
-        base_dir=os.path.join(directory, "tasks"),
+        base_dir=tasks_dir or os.path.join(directory, "tasks"),
         categories=categories,
         strict=False,
     )
@@ -221,8 +252,11 @@ def _make_config(
     config.fake_external_dangerous_tool = bool(raw.get("fake_external_dangerous_tool", True))  # type: ignore[attr-defined]
     config.fake_tail_audit_verdict = raw.get("fake_tail_audit_verdict", "approve")  # type: ignore[attr-defined]
     config.fake_audit_raw_override = raw.get("fake_audit_raw_override")  # type: ignore[attr-defined]
+    # 真实 provider 的连接参数：由调用方（CLI / GUI 启动器）注入，绝不落盘
+    config.api_key = None  # type: ignore[attr-defined]
+    config.base_url = None  # type: ignore[attr-defined]
+    config.max_retries = int(raw.get("max_retries", 3))  # type: ignore[attr-defined]
     return config
-
 
 # ---------------------------------------------------------------------------
 # 运行
@@ -249,7 +283,8 @@ def build_offline_client(config: ExperimentConfig, role: str = "main"):
     - `provider=fake`：离线确定性客户端。按 `(role, provider, 是否模拟生成期主动登记修订)`
       缓存实例 —— 主模型与审核 Agent 必须是**不同实例**，H 三个子组也不能共用同一实例
       （否则 `set_task` 会互相污染）。
-    - 真实 provider：需要环境变量里的凭据，**不缓存**（每次都新建连接）。
+    - 真实 provider：按 §11.6 包一层重试（最多 3 次、指数退避），并注入 API 地址与密钥。
+      密钥来源优先级：CLI 显式传入 > 环境变量。**不缓存**（每次都新建）。
     """
     provider = getattr(config, "provider", "fake")
     if provider == "fake":
@@ -268,22 +303,42 @@ def build_offline_client(config: ExperimentConfig, role: str = "main"):
                 spontaneous_revision=spontaneous,
             )
         return _CLIENT_CACHE[key]
+
+    from llm.base_client import RetryingClient
+
     if provider == "openai":
         from llm.openai_client import OpenAIClient
 
-        return OpenAIClient(
-            api_key=os.environ.get("OPENAI_API_KEY", ""),
+        client = OpenAIClient(
+            api_key=_resolve_api_key(config, "OPENAI_API_KEY"),
             model=config.sampling.model,
-            base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+            base_url=getattr(config, "base_url", None) or os.environ.get(
+                "OPENAI_BASE_URL", "https://api.openai.com/v1"
+            ),
         )
+        return RetryingClient(client, max_retries=int(getattr(config, "max_retries", 3)))
     if provider == "anthropic":
         from llm.anthropic_client import AnthropicClient
 
-        return AnthropicClient(
-            api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+        client = AnthropicClient(
+            api_key=_resolve_api_key(config, "ANTHROPIC_API_KEY"),
             model=config.sampling.model,
+            base_url=getattr(config, "base_url", None) or os.environ.get(
+                "ANTHROPIC_BASE_URL", "https://api.anthropic.com/v1"
+            ),
         )
+        return RetryingClient(client, max_retries=int(getattr(config, "max_retries", 3)))
     raise ConfigError(f"unknown provider: {provider!r}")
+
+
+def _resolve_api_key(config: ExperimentConfig, env_name: str) -> str:
+    key = getattr(config, "api_key", None) or os.environ.get(env_name, "")
+    if not key:
+        raise ConfigError(
+            f"provider {getattr(config, 'provider', '?')!r} 需要 API key："
+            f"用 --api-key 传入或设置环境变量 {env_name}（绝不会写进配置或日志）"
+        )
+    return key
 
 
 def run_single(config: ExperimentConfig, task, run_index: int, out_dir: str, executor=None) -> RunSummary:
@@ -351,6 +406,11 @@ def run_experiment(
     task_ids: Optional[list] = None,
     verbose: bool = True,
     metrics_mode: str = "group",
+    tasks_dir: Optional[str] = None,
+    provider: Optional[str] = None,
+    base_url: Optional[str] = None,
+    api_key: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> dict:
     """跑一个（或多个子）组的全部任务，返回汇总字典。
 
@@ -363,7 +423,14 @@ def run_experiment(
     out_dir = out_dir or DEFAULT_RUNS_DIR
     os.makedirs(os.path.join(out_dir, "audit"), exist_ok=True)
     configs = build_group_configs(
-        group, configs_dir=configs_dir, task_limit=task_limit, runs_override=runs_override
+        group,
+        configs_dir=configs_dir,
+        task_limit=task_limit,
+        runs_override=runs_override,
+        tasks_dir=tasks_dir,
+    )
+    apply_connection_overrides(
+        configs, provider=provider, base_url=base_url, api_key=api_key, model=model
     )
     summary = {
         "out_dir": out_dir,
@@ -458,6 +525,11 @@ def run_all(
     runs_override: Optional[int] = None,
     groups: Optional[list] = None,
     verbose: bool = True,
+    tasks_dir: Optional[str] = None,
+    provider: Optional[str] = None,
+    base_url: Optional[str] = None,
+    api_key: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> dict:
     groups = groups or GROUP_ORDER
     out_dir = out_dir or DEFAULT_RUNS_DIR
@@ -471,6 +543,11 @@ def run_all(
             runs_override=runs_override,
             verbose=verbose,
             metrics_mode="group",
+            tasks_dir=tasks_dir,
+            provider=provider,
+            base_url=base_url,
+            api_key=api_key,
+            model=model,
         )
         combined["groups"].extend(summary["groups"])
         combined["failures"] += summary["failures"]

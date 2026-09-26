@@ -20,15 +20,31 @@ from llm.base_client import LLMClient, LLMError
 
 
 def _http_transport(url: str, headers: dict, body: bytes, timeout: float):
-    """默认传输层：返回 `(status, body_bytes)`。"""
+    """默认传输层：返回 `(status, body_bytes, response_headers)`。"""
     request = urllib.request.Request(url, data=body, headers=headers, method="POST")
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.status, response.read()
+            return response.status, response.read(), dict(response.headers)
     except urllib.error.HTTPError as exc:  # pragma: no cover - 需要真实网络
-        return exc.code, exc.read()
+        return exc.code, exc.read(), dict(exc.headers or {})
     except urllib.error.URLError as exc:  # pragma: no cover - 需要真实网络
         raise LLMError(f"transport error: {exc}") from exc
+
+
+def _split_response(result) -> tuple:
+    """兼容三元组（新）与二元组（旧的自定义 transport）。"""
+    if len(result) == 3:
+        return result[0], result[1], result[2] or {}
+    return result[0], result[1], {}
+
+
+def request_id_from(headers: dict) -> Optional[str]:
+    """从响应头提取 provider 请求 ID（§11.5 可追溯）。"""
+    for key in ("x-request-id", "request-id", "x-amzn-requestid", "openai-request-id"):
+        for header, value in (headers or {}).items():
+            if header.lower() == key and value:
+                return str(value)
+    return None
 
 
 def iter_sse_lines(payload: bytes) -> Iterator[str]:
@@ -84,17 +100,23 @@ class OpenAIClient(LLMClient):
             **self.extra_headers,
         }
         try:
-            status, payload = self.transport(f"{self.base_url}/chat/completions", headers, body, timeout)
+            status, payload, response_headers = _split_response(
+                self.transport(f"{self.base_url}/chat/completions", headers, body, timeout)
+            )
         except LLMError as exc:
             yield StreamChunk(kind="error", error=str(exc))
             return
         if status != 200:
             yield StreamChunk(kind="error", error=f"http {status}: {payload[:400].decode('utf-8', 'replace')}")
             return
-        yield from self.parse_stream(payload)
+        request_id = request_id_from(response_headers)
+        for chunk in self.parse_stream(payload):
+            if chunk.request_id is None:
+                chunk.request_id = request_id
+            yield chunk
 
     @staticmethod
-    def parse_stream(payload: bytes) -> Iterator[StreamChunk]:
+    def parse_stream(payload: bytes, request_id: Optional[str] = None) -> Iterator[StreamChunk]:
         open_calls: dict = {}
         usage: Optional[TokenUsage] = None
         for data in iter_sse_lines(payload):
@@ -104,6 +126,8 @@ class OpenAIClient(LLMClient):
                 event = json.loads(data)
             except json.JSONDecodeError:
                 continue
+            if event.get("id") and request_id is None:
+                request_id = str(event["id"])
             if event.get("usage"):
                 usage = TokenUsage(
                     int(event["usage"].get("prompt_tokens", 0)),
@@ -137,7 +161,7 @@ class OpenAIClient(LLMClient):
                             tool_args=None,
                         )
                     open_calls = {}
-        yield StreamChunk(kind="done", usage=usage)
+        yield StreamChunk(kind="done", usage=usage, request_id=request_id)
 
     def complete(self, system, prompt, sampling, timeout: float = 20.0):
         messages = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
@@ -147,7 +171,9 @@ class OpenAIClient(LLMClient):
             "Authorization": f"Bearer {self.api_key}",
             **self.extra_headers,
         }
-        status, payload = self.transport(f"{self.base_url}/chat/completions", headers, body, timeout)
+        status, payload, response_headers = _split_response(
+            self.transport(f"{self.base_url}/chat/completions", headers, body, timeout)
+        )
         if status != 200:
             raise LLMError(f"http {status}: {payload[:400].decode('utf-8', 'replace')}")
         event = json.loads(payload.decode("utf-8", "replace"))
@@ -155,6 +181,7 @@ class OpenAIClient(LLMClient):
         for choice in event.get("choices", []) or []:
             text += (choice.get("message") or {}).get("content") or ""
         usage = event.get("usage") or {}
+        self.last_request_id = request_id_from(response_headers) or event.get("id")
         return text, TokenUsage(
             int(usage.get("prompt_tokens", 0)), int(usage.get("completion_tokens", 0))
         )

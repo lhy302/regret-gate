@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "regret-gate-harness"
+version = "1.0.0"
+description = "后悔承诺门 · Harness：零后训练约束下验证 harness 侧四项外部强制机制（风险分级 / 尾部强制自审 / 独立审核 / 射程锁修订栈）的实验 harness"
+readme = {file = "harness/README.md", content-type = "text/markdown"}
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "lhy302", email = "1773044015@qq.com"}]
+keywords = ["ai-agents", "llm-agents", "tool-use", "harness", "context-window", "self-review"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+build = ["pyinstaller>=6.0"]
+
+[project.urls]
+Repository = "https://github.com/lhy302/regret-gate"
+Releases = "https://github.com/lhy302/regret-gate/releases"
+Issues = "https://github.com/lhy302/regret-gate/issues"
+
+[project.scripts]
+regret-gate-harness = "harness_cli:main"
+
+[tool.setuptools]
+# 这是一个应用型仓库（不是库）：源码位于 harness/ 下，按顶层包声明即可。
+packages = [
+    "core",
+    "llm",
+    "tasks",
+    "experiments",
+]
+py-modules = ["harness_cli"]
+
+[tool.setuptools.package-dir]
+"" = "harness"
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml"]

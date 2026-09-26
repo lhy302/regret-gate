@@ -22,11 +22,27 @@ def _http_transport(url: str, headers: dict, body: bytes, timeout: float):
     request = urllib.request.Request(url, data=body, headers=headers, method="POST")
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.status, response.read()
+            return response.status, response.read(), dict(response.headers)
     except urllib.error.HTTPError as exc:  # pragma: no cover - 需要真实网络
-        return exc.code, exc.read()
+        return exc.code, exc.read(), dict(exc.headers or {})
     except urllib.error.URLError as exc:  # pragma: no cover - 需要真实网络
         raise LLMError(f"transport error: {exc}") from exc
+
+
+def _split_response(result) -> tuple:
+    """兼容三元组（新）与二元组（旧的自定义 transport）。"""
+    if len(result) == 3:
+        return result[0], result[1], result[2] or {}
+    return result[0], result[1], {}
+
+
+def request_id_from(headers: dict) -> Optional[str]:
+    """从响应头提取 provider 请求 ID（§11.5 可追溯）。"""
+    for key in ("request-id", "x-request-id", "anthropic-request-id"):
+        for header, value in (headers or {}).items():
+            if header.lower() == key and value:
+                return str(value)
+    return None
 
 
 def iter_sse_lines(payload: bytes) -> Iterator[str]:

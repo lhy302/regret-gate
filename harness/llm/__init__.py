@@ -6,8 +6,19 @@
 
 from llm.base_client import LLMClient, LLMError, RetryingClient, estimate_tokens  # noqa: F401
 from llm.fake_client import FakeClient  # noqa: F401
+from llm.model_list import ModelListError, list_models, provider_defaults  # noqa: F401
 
-__all__ = ["LLMClient", "LLMError", "RetryingClient", "estimate_tokens", "FakeClient", "build_client"]
+__all__ = [
+    "LLMClient",
+    "LLMError",
+    "RetryingClient",
+    "estimate_tokens",
+    "FakeClient",
+    "ModelListError",
+    "list_models",
+    "provider_defaults",
+    "build_client",
+]
 
 
 def build_client(provider: str, **kwargs):

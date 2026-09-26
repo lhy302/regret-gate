@@ -1,5 +1,38 @@
 # 后悔承诺门 · 试验台
 
+[![CI](https://github.com/lhy302/regret-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/lhy302/regret-gate/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/lhy302/regret-gate)](https://github.com/lhy302/regret-gate/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Tests](https://img.shields.io/badge/tests-262%20passed-brightgreen)](#验收状态)
+
+## 下载即用（Windows，无需装 Python）
+
+从 **[Releases](https://github.com/lhy302/regret-gate/releases/latest)** 下载
+`regret-gate-harness-*-windows-x64.zip`，解压后双击 `regret-gate-harness.exe`：
+
+- 打开**图形启动器**，填 **API 地址 / API 密钥 / 模型名称**（模型名可点「获取模型列表」自动拉取）；
+- 或直接点「开始实验」用内置离线桩跑通 A–H 全组，不需要任何密钥；
+- 产出在 exe 同级的 `output/`（`report.md` 是主结果）。
+
+命令行同样可用：
+
+```powershell
+.\regret-gate-harness.exe selftest                      # 离线自检
+.\regret-gate-harness.exe run --provider fake --limit 20 # 离线跑 A–H
+$env:REGRET_GATE_API_KEY = "sk-..."                      # 真实 API 走环境变量，不进命令行
+.\regret-gate-harness.exe run --provider openai --model gpt-4o-2024-08-06 --group A,F --limit 4
+```
+
+> ⚠️ **先读真实性声明**：仓库自带的 `report.md` 与 CI 报告**全部来自离线 `FakeClient`**，
+> 只验证机制链路与指标口径；**真实 API 未跑**，因此其中的错误率/成功率**不是模型能力结论**。
+> 假设 **H5 在离线数据里是「无法测量」而不是「不成立」**（审核桩恒返回 approve）。
+> 发行版执行器为 **dry-run**：高危命令只记录、不执行，不会改动你的机器。
+
+从源码构建见 [`harness/README.md`](./harness/README.md)；
+重新打包 exe：`cd harness && py -3.12 -m PyInstaller --noconfirm --clean regret_gate_harness.spec`。
+
+---
+
 ## 这个项目是做什么的
 
 这是一个**探针项目**，不是产品。它想回答一个问题：**Transformer 究竟缺了什么？**

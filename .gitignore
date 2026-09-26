@@ -3,6 +3,9 @@ token*
 *.token
 .env
 .env.*
+# 模板文件必须入库（里面不含任何真实密钥，只是环境变量写法示例）
+!.env.example
+!**/.env.example
 *.pat
 
 # python
@@ -21,6 +24,16 @@ metrics.jsonl
 report.md
 # 交付清单要求 harness/report.md 入库（离线实验报告），单独放行
 !harness/report.md
+
+# 打包产物与运行输出
+harness/build/
+harness/dist/
+harness/release/
+harness/smoke/
+harness/output/
+output/
+launcher_config.json
+selftest.json
 
 # 编辑器 / 系统
 .vscode/

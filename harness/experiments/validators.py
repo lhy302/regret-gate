@@ -34,6 +34,18 @@ from typing import Optional
 _TS_SUFFIXES = (".ts", ".tsx")
 
 
+def _python_executable() -> Optional[str]:
+    """可用来起子进程的解释器；打包成 exe 后没有解释器，返回 None。"""
+    if getattr(sys, "frozen", False):
+        return None
+    return sys.executable
+
+
+def _can_spawn_subprocess() -> bool:
+    """冻结模式下 `sys.executable` 就是 exe 自己，不能再当解释器用。"""
+    return _python_executable() is not None
+
+
 def validate_task_output(task, text: str, workdir: Optional[str] = None, judge_client=None) -> dict:
     spec = task.validation
     kind = spec.kind
@@ -111,12 +123,22 @@ def _validate_compile(task, text: str, config: dict, workdir: Optional[str]) -> 
         path = os.path.join(directory, "artifact.ts")
         with open(path, "w", encoding="utf-8") as handle:
             handle.write(code)
-        proc = subprocess.run(
-            [tsc, "--noEmit", "--target", "es2019", path],
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
+        try:
+            proc = subprocess.run(
+                [tsc, "--noEmit", "--target", "es2019", path],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+        except (OSError, subprocess.SubprocessError) as exc:
+            return {
+                "kind": "compile",
+                "passed": False,
+                "syntax_error": False,
+                "logic_error": False,
+                "details": {"language": "typescript", "status": "error",
+                            "error": f"{type(exc).__name__}: {exc}"},
+            }
         return {
             "kind": "compile",
             "passed": proc.returncode == 0,
@@ -169,14 +191,39 @@ def _validate_unit_test(task, text: str, config: dict, workdir: Optional[str]) -
                 "reason": "declared test file not found; run recorded as failed, never faked as passed",
             },
         }
-    proc = subprocess.run(
-        [sys.executable, "-m", "unittest", os.path.basename(test_file), "-v"],
-        cwd=os.path.dirname(os.path.abspath(test_file)) or ".",
-        capture_output=True,
-        text=True,
-        timeout=float(config.get("timeout", 120)),
-        env={**os.environ, "ARTIFACT_MODULE_PATH": module_path, "ARTIFACT_TEXT_PATH": _dump_text(directory, text)},
-    )
+    interpreter = _python_executable()
+    if interpreter is None:
+        # 打包成单文件 exe 后没有 python 解释器可用来跑测试文件。
+        # 明确记为 unavailable（而不是伪装成通过或失败），见 open_questions.md Q8。
+        return {
+            "kind": "unit_test",
+            "passed": False,
+            "syntax_error": False,
+            "logic_error": False,
+            "details": {
+                "stage": "runner",
+                "status": "unavailable",
+                "reason": "frozen executable cannot spawn a python interpreter for unit_test validation",
+            },
+        }
+    try:
+        proc = subprocess.run(
+            [interpreter, "-m", "unittest", os.path.basename(test_file), "-v"],
+            cwd=os.path.dirname(os.path.abspath(test_file)) or ".",
+            capture_output=True,
+            text=True,
+            timeout=float(config.get("timeout", 120)),
+            env={**os.environ, "ARTIFACT_MODULE_PATH": module_path,
+                 "ARTIFACT_TEXT_PATH": _dump_text(directory, text)},
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {
+            "kind": "unit_test",
+            "passed": False,
+            "syntax_error": False,
+            "logic_error": False,
+            "details": {"stage": "runner", "status": "error", "error": f"{type(exc).__name__}: {exc}"},
+        }
     passed = proc.returncode == 0
     return {
         "kind": "unit_test",

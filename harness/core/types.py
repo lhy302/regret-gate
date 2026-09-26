@@ -105,6 +105,7 @@ class StreamChunk:
     tool_args: Optional[dict] = None
     error: Optional[str] = None
     usage: Optional[TokenUsage] = None
+    request_id: Optional[str] = None  # provider 请求 ID，用于可追溯（§11.5）
 
     def to_dict(self) -> dict:
         data = {
@@ -118,6 +119,8 @@ class StreamChunk:
         }
         if self.usage is not None:
             data["usage"] = self.usage.to_dict()
+        if self.request_id is not None:
+            data["request_id"] = self.request_id
         return data
 
 
