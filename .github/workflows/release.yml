@@ -1,0 +1,132 @@
+name: release
+
+# 打 tag 即发布：v1.0.0 / v1.2.3-rc1 之类
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "手动发布时使用的 tag（需已存在）"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: build windows exe and publish release
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "PyYAML>=6.0" "pyinstaller>=6.0"
+
+      - name: Run tests before packaging
+        working-directory: harness
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
+        run: |
+          python -m unittest discover -s tests
+          if ($LASTEXITCODE -ne 0) { throw "tests failed, aborting release" }
+          Write-Host "TESTS_OK"
+
+      - name: Build single-file exe
+        working-directory: harness
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --distpath dist --workpath build regret_gate_harness.spec
+          New-Item -ItemType Directory -Force -Path dist/regret-gate-harness | Out-Null
+          Move-Item -Force dist/regret-gate-harness.exe dist/regret-gate-harness/regret-gate-harness.exe
+
+      - name: Verify the packaged exe on a clean runner
+        working-directory: harness
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
+        run: |
+          # 自检：不联网，验证 configs/任务集/机制链路在打包后仍可用
+          $exe = "dist/regret-gate-harness/regret-gate-harness.exe"
+          $p = Start-Process -FilePath $exe -ArgumentList "selftest" -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw "selftest failed: exit $($p.ExitCode)" }
+          $evidence = "dist/regret-gate-harness/output/selftest.json"
+          if (-not (Test-Path $evidence)) { throw "selftest evidence missing" }
+          $json = Get-Content $evidence -Raw -Encoding utf8 | ConvertFrom-Json
+          if (-not $json.ok) { throw "selftest reported ok=false" }
+          Write-Host "SELFTEST_OK (frozen=$($json.frozen))"
+
+          # 小规模真实运行（离线桩，4 组 × 4 任务）
+          $p2 = Start-Process -FilePath $exe -ArgumentList @("run","--provider","fake","--group","A,F","--limit","4") -PassThru -Wait
+          if ($p2.ExitCode -ne 0) { throw "smoke run failed: exit $($p2.ExitCode)" }
+          New-Item -ItemType Directory -Force -Path smoke | Out-Null
+          Copy-Item dist/regret-gate-harness/output/report.md smoke/ -Force
+          Write-Host "SMOKE_OK"
+
+      - name: Package release assets
+        working-directory: harness
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") { $tag = "${{ inputs.tag }}" }
+          # 验证步骤会在 dist 里留下 output/（自检与冒烟运行的产物）。
+          # 必须清掉再打包，否则用户解压后看到的是一堆别人的运行记录。
+          Remove-Item -Recurse -Force dist/regret-gate-harness/output -ErrorAction SilentlyContinue
+          # 使用说明与 .env.example 是仓库里的受版本控制文件，随包分发
+          Copy-Item packaging/使用说明.md dist/regret-gate-harness/ -Force
+          Copy-Item packaging/.env.example dist/regret-gate-harness/ -Force
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          Compress-Archive -Path dist/regret-gate-harness/* -DestinationPath "release/regret-gate-harness-$tag-windows-x64.zip" -Force
+          Get-ChildItem release | Format-Table Name, Length
+          Write-Host "zip entries:"
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path "release/regret-gate-harness-$tag-windows-x64.zip")).Entries |
+            ForEach-Object { Write-Host "  $($_.FullName)" }
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: |
+            harness/release/*.zip
+            harness/smoke/report.md
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          draft: false
+          generate_release_notes: true
+          body: |
+            ## 下载
+
+            | 文件 | 说明 |
+            |---|---|
+            | `regret-gate-harness-*-windows-x64.zip` | Windows 单文件 exe + 使用说明 + `.env.example`。解压后双击 `regret-gate-harness.exe` 打开图形启动器，无需安装 Python |
+            | `report.md`（在 workflow artifacts 里） | CI 上离线跑出的验证报告 |
+
+            ## 真实性声明（务必先读）
+
+            - 本仓库自带的 `report.md` 与 CI 冒烟报告**全部来自离线 `FakeClient`**，只验证
+              「拦截 → 暂存 → 尾部自审 → finalize → 独立审核 → 执行」这条链路与指标口径；
+              **真实 API 未跑**，其中的 `syntax_error` / `task_success` 等数值**不是模型能力结论**。
+            - 假设 **H5（独立审核拦截有效率）在离线数据里是「无法测量」而不是「不成立」**：
+              离线审核桩恒返回 `approve`，`reject` 分支从未被触发。
+            - 离线 `latency_ms` 来自固定步长时钟，**不代表真实性能**。
+            - 执行器默认 **dry-run**：高危命令只记录、不真正执行，不会改动你的机器。
+            - 按 v0.2 §0.1，KV cache / 从编辑点重算 / 下游偏移蒸发**已移出实验范围**。
+          files: |
+            harness/release/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

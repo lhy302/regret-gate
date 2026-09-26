@@ -1,0 +1,79 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+    tags-ignore: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests (${{ matrix.os }} / py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "PyYAML>=6.0"
+
+      - name: Show environment
+        run: |
+          python --version
+          python -c "import sys, yaml, tkinter; print('yaml', yaml.__version__); print('tk', tkinter.TkVersion)"
+
+      - name: Run unit + end-to-end tests
+        working-directory: harness
+        shell: bash
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
+        run: |
+          # 262 个用例：7 个 core 模块单测 + 端到端 4 场景 + 确定性 + 配置矩阵
+          #             + 机制不空转（D 组必须真调审核）+ 指标口径 + 启动器
+          set +e
+          python -m unittest discover -s tests -v > test_output.txt 2>&1
+          code=$?
+          tail -n 40 test_output.txt
+          if [ $code -ne 0 ]; then
+            echo "TESTS_FAILED (exit $code)"
+            exit 1
+          fi
+          echo "TESTS_OK"
+
+      - name: Offline smoke run (FakeClient, 每组 4 任务)
+        working-directory: harness
+        shell: bash
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
+        run: |
+          python harness_cli.py selftest
+          python harness_cli.py run --provider fake --group A,F --limit 4 --out ci_output
+          test -f ci_output/report.md && echo "REPORT_OK"
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.os }}-py${{ matrix.python }}
+          path: |
+            harness/ci_output/report.md
+            harness/ci_output/metrics.jsonl
+            harness/ci_output/selftest.json
+          if-no-files-found: warn
+          retention-days: 14
