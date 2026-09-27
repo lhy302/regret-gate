@@ -24,11 +24,15 @@
 
 ### ⚠️ 两条必须知道的硬约束
 
-1. **本仓库不含模型权重与框架源码。**
-   `协同进化-资产/`（Qwen3 权重 1.45 GB、ik_llama.cpp / llama.cpp 源码 276 MB、微调工具链 53 MB）
-   **未入库**。要跑实验须按
-   [`docs/协同进化/版本与来源清单.md`](./docs/协同进化/版本与来源清单.md) 自行下载
-   （内含 HF 镜像 / ModelScope 命令、`git clone` 地址与 commit hash）。
+1. **推理框架源码已入库，模型权重需要自行下载。**
+   - ✅ **已在仓库**：[`sources/ik_llama.cpp/`](./sources/) —— 本项目要魔改的推理框架源码
+     （MIT 许可，`LICENSE` 与 `AUTHORS` 已随源码保留）。上手前先读
+     [`sources/README.md`](./sources/README.md)。
+   - ❌ **需自行下载**：**Qwen3-0.6B 权重（~1.5 GB）**、Qwen3-4B 权重（~8 GB）、
+     ms-swift 与 llama.cpp（对照参考）。获取方式见
+     [`docs/协同进化/版本与来源清单.md`](./docs/协同进化/版本与来源清单.md)
+     （含 HF 镜像 / ModelScope 命令、`git clone` 地址与 commit hash）。
+   - 另一处本地专属目录 `协同进化-资产/`（约 1.7 GB）**未入库**。
 
 2. **KV 相关工程不许跳过 G2 门。**
    G2 = 测量「一次 KV 编辑对后缀 KV 的实际影响半径」。
@@ -191,6 +195,9 @@ py -3.12 -m unittest discover -s tests -v
 │       ├── 规范缺口与阶段定位.md / 微调环境搭建.md / 版本与来源清单.md
 │       ├── setup_微调环境.ps1
 │       ├── 思考轨迹分析\  docs_收集\  experiments\
+├── sources\           ← 推理框架源码（已入库）
+│   ├── README.md      ← ★ 许可与署名说明、关键改造目标、排除项
+│   └── ik_llama.cpp\  ★ 要魔改的框架（MIT；含上游 LICENSE + AUTHORS）
 └── harness\           ← 第一步实现（已完成）
     ├── configs\       base.yaml + groups/A–H + tasks/（80 个任务）
     ├── core\          types / payload_builder / stream_collector / tool_call_parser /
@@ -205,8 +212,10 @@ py -3.12 -m unittest discover -s tests -v
     └── open_questions.md  规范未覆盖细节与所选最保守方案
 ```
 
-> **未在仓库中的目录**：`协同进化-资产\`（模型权重 / 框架源码 / 微调工具链，约 1.78 GB）
-> —— 按 `docs/协同进化/版本与来源清单.md` 自行下载。
+> **未在仓库中的内容**（按 `docs/协同进化/版本与来源清单.md` 自行获取）：
+> - **模型权重**：Qwen3-0.6B（~1.5 GB）、Qwen3-4B（~8 GB）
+> - **对照参考源码**：`llama.cpp`、`ms-swift`
+> - 本地专属目录 `协同进化-资产\`（约 1.7 GB）
 
 **验收状态**：`py -3.12 -m unittest discover -s tests -v` → **268 passed**；
 `py -3.12 -m experiments.runner --group all --limit 20` → **200 runs / 0 失败**；
@@ -233,31 +242,41 @@ CI 矩阵（ubuntu + windows × py3.10/3.12）在 `main` 上 4/4 全绿。
 |---|---|---|
 | `harness/`（本项目实现） | **MIT** | 本仓库自有代码 |
 | `docs/`（规范与工程文档，含 `docs/协同进化/`） | **MIT** | 本仓库自有文档 |
-| [ikawrakow/ik_llama.cpp](https://github.com/ikawrakow/ik_llama.cpp) | **MIT** | 推理框架源码，**未入库**（本地 `协同进化-资产/sources/`） |
-| [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) | **MIT** | 上游参考，**未入库** |
+| [`sources/ik_llama.cpp/`](./sources/README.md) | **MIT** | ✅ **已入库**。推理框架源码，本项目要魔改其 KV 层。**三个上游版权持有者**见 [`sources/ik_llama.cpp/LICENSE`](./sources/ik_llama.cpp/LICENSE)，`LICENSE` 与 `AUTHORS` 已随源码保留以满足 MIT 署名要求 |
+| [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) | **MIT** | 上游对照参考，**未入库**（需要时自行 clone） |
 | [modelscope/ms-swift](https://github.com/modelscope/ms-swift) | **Apache-2.0** | 微调框架，**未入库** |
 | [Anyesh/EVOKE](https://github.com/Anyesh/EVOKE) | **Apache-2.0** | 仅引用其论文结论 |
-| **Qwen3 模型权重**（`Qwen/Qwen3-0.6B`） | **Apache-2.0** | 权重本身，**未入库**（见 [HF 标签](https://hf-mirror.com/Qwen/Qwen3-0.6B)） |
+| **Qwen3 模型权重**（`Qwen/Qwen3-0.6B`） | **Apache-2.0** | **未入库**，需自行下载（见下） |
 | [QwenLM/Qwen3](https://github.com/QwenLM/Qwen3) | ⚠️ **仓库未附 LICENSE** | 该仓库是文档/示例集合，**其代码的授权状态不明确**；本仓库未复制其代码，仅引用文档 |
 | PyYAML | MIT | 唯一运行时依赖 |
 
-> ⚠️ **注意**：`协同进化-资产/models/Qwen3-0.6B/` 里的 `LICENSE` 文件是
-> **Apache License 2.0**（模型权重的许可证），**不是本项目的许可证**。
-> 二者不同层级，勿混。
+> ⚠️ **两个 MIT 不要混**：仓库根 `LICENSE` 是**本项目**的（`Copyright (c) 2026 lhy302`）；
+> `sources/ik_llama.cpp/LICENSE` 是**上游**的（ggml / llama.cpp / ik_llama.cpp 三个作者）。
+> 二者都是 MIT，但版权持有者不同。**修改源码后不要删除其中的 LICENSE 与 AUTHORS。**
 
-### 论文全文的再分发提醒
+### 需要自行下载的内容
 
-`docs/协同进化/docs_收集/` 下有两篇论文的**全文文本**（从 arXiv / Zenodo 获取）：
+| 内容 | 大小 | 获取方式 |
+|---|---|---|
+| **Qwen3-0.6B 权重** | ~1.5 GB | [`docs/协同进化/版本与来源清单.md`](./docs/协同进化/版本与来源清单.md) §4（HF 镜像 / ModelScope 命令） |
+| **Qwen3-4B 权重**（对照实验用） | ~8 GB | 同上，**建议确认训练算力路径后再下** |
+| ms-swift / llama.cpp | ~90 MB | 同上（`git clone` 地址与 commit hash） |
 
-| 论文 | 出处 |
-|---|---|
-| Leyline: KV Cache Directives for Agentic Inference | [arXiv:2606.01065](https://arxiv.org/abs/2606.01065) |
-| EVOKE: A KV-Cache Memory Hierarchy with Recompute-Free Block Recovery | [DOI 10.5281/zenodo.20467232](https://doi.org/10.5281/zenodo.20467232)（CC-BY-4.0） |
+### 论文全文的再分发声明
 
-- **EVOKE** 明确为 **CC-BY-4.0**，转载需署名 —— 本仓库已标注出处与 DOI。
-- **Leyline** 是 arXiv 预印本，**arXiv 默认不授予再分发许可**，其许可条款未在页面上明示。
-  **若你打算正式对外发布本项目，建议把 `Leyline_全文.txt` 从仓库移除，
-  只保留引用与链接**（`Leyline与EVOKE精读笔记.md` 里的引用与分析可以保留）。
+`docs/协同进化/docs_收集/` 下有两篇论文的**全文文本**，**版权归原作者所有**：
+
+| 论文 | 出处 | 许可 |
+|---|---|---|
+| Leyline: KV Cache Directives for Agentic Inference | [arXiv:2606.01065](https://arxiv.org/abs/2606.01065) | arXiv 预印本 |
+| EVOKE: A KV-Cache Memory Hierarchy with Recompute-Free Block Recovery | [DOI 10.5281/zenodo.20467232](https://doi.org/10.5281/zenodo.20467232) | CC-BY-4.0 |
+
+> **免责声明**：本仓库收录这两篇论文的全文，**仅用于学习与研究目的**，
+> 便于读者核对本项目的设计依据。**论文版权归原作者所有，本项目不对其主张任何权利**，
+> 也未从收录行为中获得任何商业利益。**EVOKE** 为 CC-BY-4.0，已标注出处与 DOI 以满足署名要求；
+> **Leyline** 为 arXiv 预印本，arXiv 页面未明示再分发许可。
+> **若原作者认为此处收录不当，请提 Issue，我们会立即移除。**
+> **如需商业使用，请自行联系原作者获取授权。**
 
 ---
 

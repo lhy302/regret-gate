@@ -63,10 +63,20 @@ Desktop.ini
 # 说明：docs/ 本身天然入库，所以这里不需要任何白名单放行规则，
 #       只需排除资产目录与会话原始转储。规则因此比上一版简单得多。
 
-# --- 大型第三方资产（模型权重 / 推理框架源码 / 微调工具链 / 微调 venv）---
+# --- 大型第三方资产 ---
+# 注意：`sources/` **不在**整目录排除之列 —— 其中 ik_llama.cpp 已入库（见下）。
 /协同进化-资产/
 # 本地 junction（由 mklink /J 建立），不要跟踪
 /协同进化
+
+# --- sources/ 的取舍（2026/09/27 调整）---
+#
+# 入库：sources/ik_llama.cpp/   推理框架源码，本项目要魔改 KV，需随仓库分发
+#       （MIT 许可，LICENSE 与 AUTHORS 已随源码一并保留，满足署名要求）
+#
+# 排除：sources/llama.cpp/       仅作上游 API 对照参考，可自行 clone，不必入库
+#       sources/ 下的许可/说明文件保留，见 sources/README.md
+/sources/llama.cpp/
 
 # --- 会话原始转储：体积大且非工程文档 ---
 #    注意：docs/ 段已有 *.jsonl 与 report.md 的排除规则，此处显式再写一次以便自查
