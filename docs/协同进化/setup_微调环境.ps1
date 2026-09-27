@@ -12,7 +12,12 @@
 
 $ErrorActionPreference = "Stop"
 
-$root = "D:\工作区表\工作区4\协同进化"
+# venv 属于「大型本地资产」，放在 协同进化-资产/ 下（该目录不入库）。
+# 不要放进 docs/协同进化/ —— 那是入库目录，venv 会污染仓库。
+# 注：仓库根的 `协同进化/` 是指向 `协同进化-资产/` 的 junction，两者等价；
+#     这里写全名以免误解。若你 clone 的是公开仓库，需先按
+#     版本与来源清单.md 自行下载 models/ sources/ finetune/。
+$root = "D:\工作区表\工作区4\协同进化-资产"
 $venv = Join-Path $root ".venv-finetune"
 $py   = Join-Path $venv "Scripts\python.exe"
 
