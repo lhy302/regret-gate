@@ -24,12 +24,68 @@
 |---|---|---|
 | `credential.helper` | `helper-selector` → 已选中 **manager** (GCM) | 凭据由 Git Credential Manager 管理 |
 | `credential.credentialStore` | `wincredman` | 令牌存进 **Windows 凭据管理器**（加密，非明文文件） |
+| `http.sslVerify` | **空值覆盖**（见 §1.1） | 抵消 system 层的 `false`，恢复证书校验 |
+| `http.schannelCheckRevoke` | `false` | 跳过 CRL/OCSP 吊销检查（国内网络查不到吊销服务器） |
 | `i18n.commitEncoding` | `utf-8` | 提交信息支持中文 |
 | `i18n.logOutputEncoding` | `utf-8` | `git log` 里中文不乱码 |
 | `core.quotepath` | `false` | 中文文件名正常显示（不再显示 `\346\216...` 转义码） |
 | `core.pager` | 空（关闭） | 避免 less 分页器把中文搞乱码 |
 
-配置文件位置：`C:\Users\Administrator\.gitconfig`（备份在 `~\.gitconfig.bak.*`）
+配置文件位置：`C:\Users\Administrator\.gitconfig`（备份在 `~\.gitconfig.bak*`）
+
+### 1.1 ⚠️ 关于 TLS 证书校验（重要，别改回去）
+
+**曾经的状态**：`C:\Program Files\Git\etc\gitconfig`（system 层）里写着
+
+```ini
+[http]
+    sslVerify = false
+```
+
+这会让 **Git 不校验任何 HTTPS 证书**，且被 GCM 检测到、每次推送都警告：
+
+```
+warning: ----------------- SECURITY WARNING ----------------
+warning: | TLS certificate verification has been disabled! |
+```
+
+**风险**：不校验证书 = 中间人可以冒充 github.com。而你的 **GitHub 令牌就靠在
+这条连接上传**，且现在已存进凭据管理器长期复用 —— 这是**最不该关校验的场景**。
+
+**为什么它当初被关掉**：实测真正的原因是
+
+```
+schannel: next InitializeSecurityContext failed:
+CRYPT_E_NO_REVOCATION_CHECK (0x80092012)
+```
+
+Windows schannel 要联网查「证书是否被吊销」（CRL/OCSP），国内网络查不到就**直接报错**。
+于是有人（早期文档 `GitHub推送操作指南.md` 里也这么建议）图省事关掉了**整个证书校验**。
+**这是用大炮打蚊子** —— 真正有问题的只是吊销检查那一步。
+
+**正确修法（已应用）**：
+
+```powershell
+# ① 用空值覆盖 system 层的 sslVerify=false，让校验回到默认的"开启"
+git config --global --add http.sslVerify ""
+
+# ② 只关掉吊销检查（证书链本身仍然验证）
+git config --global http.schannelCheckRevoke false
+```
+
+**为什么"空值覆盖"而不是设成 `true`**：
+实测设成**显式值**（`true` 或 `false`）都会让 schannel 走吊销检查分支并失败：
+
+| 配置 | 结果 |
+|---|---|
+| system `sslVerify=false`（原状） | 能连，但**无证书校验** + 每次告警 |
+| `-c http.sslVerify=true` | ❌ `CRYPT_E_NO_REVOCATION_CHECK` |
+| `-c http.sslVerify=true -c schannelCheckRevoke=false` | ❌ 仍然失败 |
+| **空值覆盖 + `schannelCheckRevoke=false`（现方案）** | ✅ 能连、无告警、**证书校验生效** |
+
+空值等于「本条不设置」，于是 git 回落到内置默认（开启校验），而吊销检查单独关闭。
+
+**验证方式**：`git ls-remote origin refs/heads/main` 不再打印 `SECURITY WARNING`。
 
 ---
 
@@ -186,6 +242,8 @@ git commit --amend -m "新的说明"
 | `Authentication failed` | 令牌错/过期/权限不足 | 重新生成令牌（要 `repo` + `workflow`） |
 | `refusing to allow ... without 'workflow' scope` | 令牌缺 `workflow` 权限 | 重签令牌，同时勾 `repo` + `workflow` |
 | `Recv failure: Connection was reset` | 网络抖动（国内访问 GitHub 常见） | **直接重试**，通常第二次就成功 |
+| `TLS certificate verification has been disabled` | 有配置关掉了整条证书校验 | 见 §1.1，**别放着不管** |
+| `CRYPT_E_NO_REVOCATION_CHECK` | 查不到证书吊销列表（国内网络） | 见 §1.1：关 `schannelCheckRevoke`，**不要关** `sslVerify` |
 | `Push cannot contain secrets`（GH013） | GitHub 检测到提交里有密钥 | **别绕过！** 先删掉密钥再提交（见 §5） |
 | `fatal: not a git repository` | 当前目录不是 git 仓库 | 先 `cd` 到正确目录 |
 | `pathspec ... did not match` | 文件名写错了 | 检查文件名，用 `git status` 看准确名称 |
