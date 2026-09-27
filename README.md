@@ -217,6 +217,50 @@ CI 矩阵（ubuntu + windows × py3.10/3.12）在 `main` 上 4/4 全绿。
 历史遗留的 **force 覆盖**流程已作废——当前是常规 `commit → push`，不要再 force。
 外部 PR #2 / #3 已合并关闭；本地运维手册（推送指南）**不入库**，由 `.gitignore` 忽略。
 
+## 许可证
+
+### 本项目
+
+**[MIT License](./LICENSE)** — Copyright (c) 2026 lhy302
+
+你可以自由使用、修改、分发、商用，只需保留版权声明与许可声明。
+
+### 第三方组件（依各自许可证）
+
+本仓库**源码**为 MIT，但仓库与配套资产中包含/引用第三方内容，各有其许可证：
+
+| 组件 | 许可证 | 说明 |
+|---|---|---|
+| `harness/`（本项目实现） | **MIT** | 本仓库自有代码 |
+| `docs/`（规范与工程文档，含 `docs/协同进化/`） | **MIT** | 本仓库自有文档 |
+| [ikawrakow/ik_llama.cpp](https://github.com/ikawrakow/ik_llama.cpp) | **MIT** | 推理框架源码，**未入库**（本地 `协同进化-资产/sources/`） |
+| [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) | **MIT** | 上游参考，**未入库** |
+| [modelscope/ms-swift](https://github.com/modelscope/ms-swift) | **Apache-2.0** | 微调框架，**未入库** |
+| [Anyesh/EVOKE](https://github.com/Anyesh/EVOKE) | **Apache-2.0** | 仅引用其论文结论 |
+| **Qwen3 模型权重**（`Qwen/Qwen3-0.6B`） | **Apache-2.0** | 权重本身，**未入库**（见 [HF 标签](https://hf-mirror.com/Qwen/Qwen3-0.6B)） |
+| [QwenLM/Qwen3](https://github.com/QwenLM/Qwen3) | ⚠️ **仓库未附 LICENSE** | 该仓库是文档/示例集合，**其代码的授权状态不明确**；本仓库未复制其代码，仅引用文档 |
+| PyYAML | MIT | 唯一运行时依赖 |
+
+> ⚠️ **注意**：`协同进化-资产/models/Qwen3-0.6B/` 里的 `LICENSE` 文件是
+> **Apache License 2.0**（模型权重的许可证），**不是本项目的许可证**。
+> 二者不同层级，勿混。
+
+### 论文全文的再分发提醒
+
+`docs/协同进化/docs_收集/` 下有两篇论文的**全文文本**（从 arXiv / Zenodo 获取）：
+
+| 论文 | 出处 |
+|---|---|
+| Leyline: KV Cache Directives for Agentic Inference | [arXiv:2606.01065](https://arxiv.org/abs/2606.01065) |
+| EVOKE: A KV-Cache Memory Hierarchy with Recompute-Free Block Recovery | [DOI 10.5281/zenodo.20467232](https://doi.org/10.5281/zenodo.20467232)（CC-BY-4.0） |
+
+- **EVOKE** 明确为 **CC-BY-4.0**，转载需署名 —— 本仓库已标注出处与 DOI。
+- **Leyline** 是 arXiv 预印本，**arXiv 默认不授予再分发许可**，其许可条款未在页面上明示。
+  **若你打算正式对外发布本项目，建议把 `Leyline_全文.txt` 从仓库移除，
+  只保留引用与链接**（`Leyline与EVOKE精读笔记.md` 里的引用与分析可以保留）。
+
+---
+
 ## 参与
 
 - 贡献前请读 [`CONTRIBUTING.md`](./CONTRIBUTING.md)；变更记录见 [`CHANGELOG.md`](./CHANGELOG.md)。
